@@ -1,31 +1,32 @@
 export default class Team {
   constructor() {
-    this.characters = [];
-    this.currentIndex = 0;
-  }
-
-  [Symbol.iterator]() {
-    return this;
-  }
-
-  next() {
-    if (this.currentIndex < this.characters.length) {
-      this.currentIndex += 1;
-      return {
-        value: this.characters[this.currentIndex],
-        done: false,
-      };
-    }
-
-    return { done: true };
+    this.characters = new Set();
   }
 
   add(character) {
-    if (!this.characters.find((char) => char === character)) {
-      this.characters.push(character);
+    if (!this.characters.has(character)) {
+      this.characters.add(character);
     } else {
-      // eslint-disable-next-line no-console
-      console.log(`Character ${character.name} is already in the team.`);
+      throw new Error(`Character ${character.name} is already in the team.`);
     }
+  }
+
+  [Symbol.iterator]() {
+    const charactersArray = Array.from(this.characters);
+    let currentIndex = 0;
+
+    return {
+      next() {
+        if (currentIndex < charactersArray.length) {
+          currentIndex += 1;
+          return {
+            value: charactersArray[currentIndex - 1],
+            done: false,
+          };
+        }
+
+        return { done: true };
+      },
+    };
   }
 }
